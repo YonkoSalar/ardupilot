@@ -90,7 +90,7 @@ void RC_Channel_Copter::init_aux_function(const aux_func_t ch_option, const AuxS
     case AUX_FUNC::SMART_RTL:
     case AUX_FUNC::STABILIZE:
     case AUX_FUNC::THROW:
-    case AUX_FUNC::USER_FUNC1:
+    case AUX_FUNC::USER_FUNC1: //NEW PARAMETER TO ADJUST ANGLE OF UAV
     case AUX_FUNC::USER_FUNC2:
     case AUX_FUNC::USER_FUNC3:
     case AUX_FUNC::WINCH_CONTROL:
