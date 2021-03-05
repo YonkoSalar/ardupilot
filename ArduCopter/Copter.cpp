@@ -219,6 +219,7 @@ constexpr int8_t Copter::_failsafe_priorities[7];
 // Main loop - 400hz
 void Copter::fast_loop()
 {
+    GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "Best number ever: %f", 42.4242424242); // ADDED TEST DEBUG 
     // update INS immediately to get current gyro data populated
     ins.update();
 
