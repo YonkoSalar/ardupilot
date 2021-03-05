@@ -226,6 +226,12 @@ void Copter::fast_loop()
         counter = 0;
         GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "hello world! %5.3f", (double)3.142f);
     }
+    static uint8_t counter = 0; //DEBUGGER TEST
+    counter++;
+    if (counter > 50) {
+        counter = 0;
+        GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "hello world1! %5.3f", (double)3.142f);
+    }
     
     
     // update INS immediately to get current gyro data populated
