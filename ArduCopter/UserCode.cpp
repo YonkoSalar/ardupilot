@@ -43,7 +43,7 @@ void Copter::userhook_SuperSlowLoop()
 }
 #endif
 
-#ifdef USERHOOK_AUXSWITCH
+//#ifdef USERHOOK_AUXSWITCH
 void Copter::userhook_auxSwitch1(uint8_t ch_flag)
 {
     // put your aux switch #1 handler here (CHx_OPT = 47)
@@ -58,4 +58,4 @@ void Copter::userhook_auxSwitch3(uint8_t ch_flag)
 {
     // put your aux switch #3 handler here (CHx_OPT = 49)
 }
-#endif
+//#endif
