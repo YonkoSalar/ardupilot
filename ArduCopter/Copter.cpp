@@ -220,12 +220,11 @@ constexpr int8_t Copter::_failsafe_priorities[7];
 // Main loop - 400hz
 void Copter::fast_loop()
 {
-    gcs().send_text(MAV_SEVERITY_CRITICAL, "hello world! %5.3f", (double)3.142f); //DEBUGGER TEST
     static uint8_t counter = 0; //DEBUGGER TEST
     counter++;
     if (counter > 50) {
         counter = 0;
-        gcs().send_text(MAV_SEVERITY_CRITICAL, "hello world! %5.3f", (double)3.142f);
+        GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "hello world! %5.3f", (double)3.142f);
     }
     
     
