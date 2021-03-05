@@ -220,16 +220,16 @@ constexpr int8_t Copter::_failsafe_priorities[7];
 // Main loop - 400hz
 void Copter::fast_loop()
 {
-    static uint8_t counter = 0; //DEBUGGER TEST
-    counter++;
-    if (counter > 50) {
-        counter = 0;
+    static uint8_t counter1 = 0; //DEBUGGER TEST
+    counter1++;
+    if (counter1 > 50) {
+        counter1 = 0;
         GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "hello world! %5.3f", (double)3.142f);
     }
-    static uint8_t counter = 0; //DEBUGGER TEST
-    counter++;
-    if (counter > 50) {
-        counter = 0;
+    static uint8_t counter2 = 0; //DEBUGGER TEST
+    counter2++;
+    if (counter2 > 50) {
+        counter2 = 0;
         GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "hello world1! %5.3f", (double)3.142f);
     }
     
