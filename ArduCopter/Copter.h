@@ -383,7 +383,7 @@ private:
 
     RCMapper rcmap;
 
-    // intertial nav alt when we armed
+    // inertial nav alt when we armed
     float arming_altitude_m;
 
     // Failsafe
@@ -744,7 +744,9 @@ private:
 #endif
 
     // fence.cpp
+#if AC_FENCE == ENABLED
     void fence_check();
+#endif
 
     // heli.cpp
     void heli_init();

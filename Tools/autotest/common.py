@@ -2113,9 +2113,7 @@ class AutoTest(ABC):
 
     def initialise_after_reboot_sitl(self):
 
-        # after reboot stream-rates may be zero.  Prompt MAVProxy to
-        # send a rate-change message by changing away from our normal
-        # stream rates and back again:
+        # after reboot stream-rates may be zero.  Request streams.
         self.drain_mav()
         self.wait_heartbeat()
         self.set_streamrate(self.sitl_streamrate())
@@ -2138,12 +2136,7 @@ class AutoTest(ABC):
             except IOError:
                 pass
             break
-        # MAVProxy only checks the streamrates once every 15 seconds.
-        # Encourage it:
-        self.set_streamrate(self.sitl_streamrate()+1)
         self.set_streamrate(self.sitl_streamrate())
-        # we also need to wait for MAVProxy to requests streams again
-        # - in particular, RC_CHANNELS.
         m = self.mav.recv_match(type='RC_CHANNELS', blocking=True, timeout=15)
         if m is None:
             raise NotAchievedException("No RC_CHANNELS message after restarting SITL")
@@ -2159,7 +2152,6 @@ class AutoTest(ABC):
         self.progress("Resetting SITL commandline to default")
         self.stop_SITL()
         self.start_SITL(wipe=True)
-        self.set_streamrate(self.sitl_streamrate()+1)
         self.set_streamrate(self.sitl_streamrate())
         self.apply_defaultfile_parameters()
         try:
@@ -4269,6 +4261,23 @@ class AutoTest(ABC):
                         mavutil.mavlink.enums["MAV_RESULT"][m.result].name))
                 break
 
+    def set_current_waypoint_using_mav_cmd_do_set_mission_current(
+            self,
+            seq,
+            target_sysid=1,
+            target_compid=1):
+        self.run_cmd(mavutil.mavlink.MAV_CMD_DO_SET_MISSION_CURRENT,
+                     seq,
+                     0,
+                     0,
+                     0,
+                     0,
+                     0,
+                     0,
+                     timeout=1,
+                     target_sysid=target_sysid,
+                     target_compid=target_compid)
+
     def set_current_waypoint_using_mission_set_current(self,
                                                        seq,
                                                        target_sysid=1,
@@ -4601,6 +4610,27 @@ class AutoTest(ABC):
         self.mavproxy.send('module load relay\n')
         self.mavproxy.expect("Loaded module relay")
         self.mavproxy.send("relay set %d %d\n" % (relay_num, on_off))
+
+    def do_fence_en_or_dis_able(self, value, want_result=mavutil.mavlink.MAV_RESULT_ACCEPTED):
+        if value:
+            p1 = 1
+        else:
+            p1 = 0
+        self.run_cmd(mavutil.mavlink.MAV_CMD_DO_FENCE_ENABLE,
+                     p1, # param1
+                     0, # param2
+                     0, # param3
+                     0, # param4
+                     0, # param5
+                     0, # param6
+                     0, # param7
+                     want_result=want_result)
+
+    def do_fence_enable(self, want_result=mavutil.mavlink.MAV_RESULT_ACCEPTED):
+        self.do_fence_en_or_dis_able(True, want_result=want_result)
+
+    def do_fence_disable(self, want_result=mavutil.mavlink.MAV_RESULT_ACCEPTED):
+        self.do_fence_en_or_dis_able(False, want_result=want_result)
 
     #################################################
     # WAIT UTILITIES
@@ -5226,6 +5256,20 @@ class AutoTest(ABC):
             if self.sensor_has_state(mavutil.mavlink.MAV_SYS_STATUS_PREARM_CHECK, True, True, True):
                 break
 
+    def assert_fence_enabled(self, timeout=2):
+        # Check fence is enabled
+        m = self.mav.recv_match(type='FENCE_STATUS', blocking=True, timeout=timeout)
+        self.progress("Got (%s)" % str(m))
+        if m is None:
+            raise NotAchievedException("Fence status was not received")
+
+    def assert_fence_disabled(self, timeout=2):
+        # Check fence is not enabled
+        m = self.mav.recv_match(type='FENCE_STATUS', blocking=True, timeout=timeout)
+        self.progress("Got (%s)" % str(m))
+        if m is not None:
+            raise NotAchievedException("Fence status received unexpectedly")
+
     def wait_ready_to_arm(self, timeout=120, require_absolute=True, check_prearm_bit=True):
         # wait for EKF checks to pass
         self.progress("Waiting for ready to arm")
@@ -5263,7 +5307,7 @@ Also, ignores heartbeats not from our target system'''
             if m.get_srcSystem() == self.sysid_thismav():
                 return m
 
-    def wait_ekf_happy(self, timeout=30, require_absolute=True):
+    def wait_ekf_happy(self, timeout=45, require_absolute=True):
         """Wait for EKF to be happy"""
 
         """ if using SITL estimates directly """
@@ -5955,6 +5999,7 @@ Also, ignores heartbeats not from our target system'''
 
         # HOME_POSITION is used as a surrogate for origin until we
         # start emitting GPS_GLOBAL_ORIGIN
+        self.wait_ekf_happy()
         orig_home = self.poll_home_position()
         if orig_home is None:
             raise AutoTestTimeoutException()
@@ -5963,11 +6008,11 @@ Also, ignores heartbeats not from our target system'''
         start_loc = self.sitl_start_location()
         self.progress("SITL start loc: %s" % str(start_loc))
         delta = abs(orig_home.latitude * 1.0e-7 - start_loc.lat)
-        if delta > 0.0000001:
+        if delta > 0.000001:
             raise ValueError("homes differ in lat got=%f vs want=%f delta=%f" %
                              (orig_home.latitude * 1.0e-7, start_loc.lat, delta))
         delta = abs(orig_home.longitude * 1.0e-7 - start_loc.lng)
-        if delta > 0.0000001:
+        if delta > 0.000001:
             raise ValueError("homes differ in lon  got=%f vs want=%f delta=%f" %
                              (orig_home.longitude * 1.0e-7, start_loc.lng, delta))
         if self.is_rover():
@@ -7293,9 +7338,6 @@ Also, ignores heartbeats not from our target system'''
         self.victim_message_id = mavutil.mavlink.MAVLINK_MSG_ID_VFR_HUD
         ex = None
         try:
-            # tell MAVProxy to stop stuffing around with the rates:
-            self.mavproxy.send("set streamrate -1\n")
-
             rate = round(self.get_message_rate(self.victim_message, 20))
             self.progress("Initial rate: %u" % rate)
 
@@ -7350,10 +7392,6 @@ Also, ignores heartbeats not from our target system'''
 
         self.progress("Resetting CAMERA_FEEDBACK rate to zero")
         self.set_message_rate_hz(mavutil.mavlink.MAVLINK_MSG_ID_CAMERA_FEEDBACK, -1)
-
-        # tell MAVProxy to start stuffing around with the rates:
-        sr = self.sitl_streamrate()
-        self.mavproxy.send("set streamrate %u\n" % sr)
 
         if ex is not None:
             raise ex
@@ -9477,13 +9515,13 @@ switch value'''
         self.end_subtest("Change mode via MAVLite")
 
         self.start_subtest("Enable fence via MAVlite")
-        #  FIXME: currently plane-specific
+        #  Fence can be enabled using MAV_CMD
         self.run_cmd_via_mavlite(
             frsky,
             sport_to_mavlite,
             mavutil.mavlink.MAV_CMD_DO_FENCE_ENABLE,
             p1=1,
-            want_result=mavutil.mavlink.MAV_RESULT_UNSUPPORTED,
+            want_result=mavutil.mavlink.MAV_RESULT_ACCEPTED,
         )
         self.end_subtest("Enable fence via MAVlite")
 

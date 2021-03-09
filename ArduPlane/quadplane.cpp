@@ -1306,7 +1306,9 @@ void QuadPlane::init_qland(void)
 #if LANDING_GEAR_ENABLED == ENABLED
     plane.g2.landing_gear.deploy_for_landing();
 #endif
-    plane.disable_fence_for_landing();
+#if AC_FENCE == ENABLED
+    plane.fence.auto_disable_fence_for_landing();
+#endif
 }
 
 
@@ -2938,7 +2940,9 @@ bool QuadPlane::verify_vtol_takeoff(const AP_Mission::Mission_Command &cmd)
     plane.TECS_controller.set_pitch_max_limit(transition_pitch_max);
     set_alt_target_current();
 
-    plane.complete_auto_takeoff();
+#if AC_FENCE == ENABLED
+    plane.fence.auto_enable_fence_after_takeoff();
+#endif
 
     if (plane.control_mode == &plane.mode_auto) {
         // we reset TECS so that the target height filter is not
@@ -3049,7 +3053,9 @@ bool QuadPlane::verify_vtol_land(void)
     if (poscontrol.state == QPOS_POSITION2 &&
         plane.auto_state.wp_distance < 2) {
         poscontrol.state = QPOS_LAND_DESCEND;
-        plane.disable_fence_for_landing();
+#if AC_FENCE == ENABLED
+        plane.fence.auto_disable_fence_for_landing();
+#endif
 #if LANDING_GEAR_ENABLED == ENABLED
         plane.g2.landing_gear.deploy_for_landing();
 #endif
