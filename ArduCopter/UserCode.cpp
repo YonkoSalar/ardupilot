@@ -40,6 +40,10 @@ void Copter::userhook_SlowLoop()
 void Copter::userhook_SuperSlowLoop()
 {
     // put your 1Hz code here
+    RC_Channel* channel = rc().channel(8);
+    float val = channel->norm_input();
+
+    GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "channel 9 value: %f", val);
 }
 #endif
 
@@ -47,9 +51,17 @@ void Copter::userhook_SuperSlowLoop()
 void Copter::userhook_auxSwitch1(const RC_Channel::AuxSwitchPos& ch_flag)
 {
     // put your aux switch #1 handler here (CHx_OPT = 47)
+    /*
+    * RC_Channel channel = RC_Channels::channel(9);
+    float val = channel.norm_input();
+
+    GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "userhook print");
+ */
 }
 
 void Copter::userhook_auxSwitch2(const RC_Channel::AuxSwitchPos& ch_flag)
+   
+    
 {
     // put your aux switch #2 handler here (CHx_OPT = 48)
 }
