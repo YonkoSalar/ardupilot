@@ -220,6 +220,8 @@ constexpr int8_t Copter::_failsafe_priorities[7];
 // Main loop - 400hz
 void Copter::fast_loop()
 { 
+    
+
     // update INS immediately to get current gyro data populated
     ins.update();
 

@@ -114,9 +114,18 @@ void AP_InertialSensor_Backend::_rotate_and_correct_accel(uint8_t instance, Vect
 
         // apply scaling
         const Vector3f &accel_scale = _imu._accel_scale[instance].get();
-        accel.x *= accel_scale.x;
-        accel.y *= accel_scale.y;
+        accel.x *= accel_scale.x; 
+        accel.y *= accel_scale.y; 
         accel.z *= accel_scale.z;
+
+        //APPLY CHANGE IN ACCELERATION
+        // acel.x += 
+        //DEBUGGER
+        GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "Accelometer in x-axis", (double)accel.x);
+        GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "Accelometer in y-axis", (double)accel.y);
+        GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "Accelometer in z-axis", (double)accel.z);
+
+
     }
 
     // rotate to body frame

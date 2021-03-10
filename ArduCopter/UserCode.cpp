@@ -42,7 +42,7 @@ void Copter::userhook_SuperSlowLoop()
     // put your 1Hz code here
     RC_Channel* channel = rc().channel(8);
     float val = channel->norm_input();
-
+    
     GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "channel 9 value: %f", val);
 }
 #endif
