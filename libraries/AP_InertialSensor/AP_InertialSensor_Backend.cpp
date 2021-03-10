@@ -3,6 +3,7 @@
 #include "AP_InertialSensor_Backend.h"
 #include <AP_Logger/AP_Logger.h>
 #include <AP_BoardConfig/AP_BoardConfig.h>
+#include <GCS_MAVLink/GCS.h>
 #if AP_MODULE_SUPPORTED
 #include <AP_Module/AP_Module.h>
 #include <stdio.h>
