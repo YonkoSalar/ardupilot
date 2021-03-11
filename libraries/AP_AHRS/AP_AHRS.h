@@ -618,6 +618,11 @@ public:
     void Write_Origin(uint8_t origin_type, const Location &loc) const; 
     void Write_POS(void) const;
 
+    AP_Int8 _board_orientation;
+    AP_Float _custom_roll;
+    AP_Float _custom_pitch;
+    AP_Float _custom_yaw;
+
 protected:
     void update_nmea_out();
 
@@ -635,13 +640,11 @@ protected:
     AP_Float beta;
     AP_Int8 _gps_use;
     AP_Int8 _wind_max;
-    AP_Int8 _board_orientation;
+    
     AP_Int8 _gps_minsats;
     AP_Int8 _gps_delay;
     AP_Int8 _ekf_type;
-    AP_Float _custom_roll;
-    AP_Float _custom_pitch;
-    AP_Float _custom_yaw;
+    
 
     Matrix3f _custom_rotation;
 

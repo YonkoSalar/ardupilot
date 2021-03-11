@@ -1,4 +1,6 @@
 #include "Copter.h"
+#include "UserVariables.h"
+#include "../libraries/AP_AHRS/AP_AHRS.h"
 
 #ifdef USERHOOK_INIT
 void Copter::userhook_init()
@@ -42,8 +44,20 @@ void Copter::userhook_SuperSlowLoop()
     // put your 1Hz code here
     RC_Channel* channel = rc().channel(8);
     float val = channel->norm_input();
+
     
-    GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "channel 9 value: %f", val);
+
+    GCS_SEND_TEXT(MAV_SEVERITY_INFO, "RC channel val: %f", val);
+
+    RC_pitch_offset = val * 90.f;
+    GCS_SEND_TEXT(MAV_SEVERITY_INFO, "RC_pitch_offset: %f", RC_pitch_offset);
+
+    if (val != RC_pitch_offset) {
+        ahrs._board_orientation = ROTATION_CUSTOM;
+        ahrs._custom_yaw = 270;
+        ahrs._custom_roll = (int)RC_pitch_offset;
+        ahrs.update_orientation();
+    }
 }
 #endif
 

@@ -334,9 +334,11 @@ private:
     GCS_Copter &gcs() { return _gcs; }
 
     // User variables
+    /*
 #ifdef USERHOOK_VARIABLES
-# include USERHOOK_VARIABLES
+#include USERHOOK_VARIABLES
 #endif
+    */
 
     // Documentation of GLobals:
     typedef union {

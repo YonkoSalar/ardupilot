@@ -9,6 +9,9 @@
 #include <stdio.h>
 #endif
 
+#include "../../ArduCopter/UserVariables.h"
+
+
 #define SENSOR_RATE_DEBUG 0
 
 const extern AP_HAL::HAL& hal;
@@ -117,16 +120,7 @@ void AP_InertialSensor_Backend::_rotate_and_correct_accel(uint8_t instance, Vect
         const Vector3f &accel_scale = _imu._accel_scale[instance].get();
         accel.x *= accel_scale.x; 
         accel.y *= accel_scale.y; 
-        accel.z *= accel_scale.z;
-
-        //APPLY CHANGE IN ACCELERATION
-        // acel.x += 
-        //DEBUGGER
-        GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "Accelometer in x-axis", (double)accel.x);
-        GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "Accelometer in y-axis", (double)accel.y);
-        GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "Accelometer in z-axis", (double)accel.z);
-
-
+        accel.z *= accel_scale.z;        
     }
 
     // rotate to body frame
@@ -135,6 +129,26 @@ void AP_InertialSensor_Backend::_rotate_and_correct_accel(uint8_t instance, Vect
     } else {
         accel.rotate(_imu._board_orientation);
     }
+    /*
+    //APPLY CHANGE IN ACCELERATION
+    float newAccel_x2 = 0.f;
+    float newAccel_z2 = 0.f;
+
+    //if (RC_pitch_offset != 0.f) {
+    newAccel_x2 = (accel.x * cosf(RC_pitch_offset * M_PI / 180.0) - accel.z * sinf(RC_pitch_offset * M_PI / 180.0));
+    newAccel_z2 = (accel.x * sinf(RC_pitch_offset * M_PI / 180.0) + accel.z * cosf(RC_pitch_offset * M_PI / 180.0));
+    //}
+
+    static int debugcounter = 0;
+    debugcounter++;
+    if (debugcounter > 1000) {
+        debugcounter = 0;
+        GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "RC: %.2f,  X-axis: %.2f,  Z-axis: %.2f", RC_pitch_offset, newAccel_x2, newAccel_z2);
+    }
+
+    accel.x = newAccel_x2;
+    accel.z = newAccel_z2;
+    */
 }
 
 void AP_InertialSensor_Backend::_rotate_and_correct_gyro(uint8_t instance, Vector3f &gyro) 
