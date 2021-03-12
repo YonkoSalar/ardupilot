@@ -45,6 +45,10 @@ Mode *Copter::mode_from_mode_num(const Mode::Number mode)
             ret = &mode_althold;
             break;
 
+        case Mode::Number::ANG_HOLD: // NEW MODE
+            ret = &mode_ang_hold;
+            break;
+
 #if MODE_AUTO_ENABLED == ENABLED
         case Mode::Number::AUTO:
             ret = &mode_auto;

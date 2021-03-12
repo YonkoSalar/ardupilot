@@ -914,6 +914,9 @@ private:
 #else
     ModeAcro mode_acro;
 #endif
+
+    ModeAngHold mode_ang_hold; // NEW MODE
+
 #endif
     ModeAltHold mode_althold;
 #if MODE_AUTO_ENABLED == ENABLED
