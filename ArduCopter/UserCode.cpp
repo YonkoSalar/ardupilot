@@ -65,12 +65,12 @@ void Copter::userhook_SuperSlowLoop()
 void Copter::userhook_auxSwitch1(const RC_Channel::AuxSwitchPos& ch_flag)
 {
     // put your aux switch #1 handler here (CHx_OPT = 47)
-    /*
-    * RC_Channel channel = RC_Channels::channel(9);
+    
+    RC_Channel channel = RC_Channels::channel(9);
     float val = channel.norm_input();
 
     GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "userhook print");
- */
+ 
 }
 
 void Copter::userhook_auxSwitch2(const RC_Channel::AuxSwitchPos& ch_flag)
