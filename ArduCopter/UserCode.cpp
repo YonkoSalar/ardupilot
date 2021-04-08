@@ -1,6 +1,7 @@
 #include "Copter.h"
 #include "UserVariables.h"
 #include "../libraries/AP_AHRS/AP_AHRS.h"
+#include <math.h>
 
 #ifdef USERHOOK_INIT
 void Copter::userhook_init()
@@ -52,7 +53,7 @@ void Copter::userhook_SuperSlowLoop()
     RC_pitch_offset = val * 90.f;
     GCS_SEND_TEXT(MAV_SEVERITY_INFO, "RC_pitch_offset: %f", RC_pitch_offset);
 
-    if (val != RC_pitch_offset) {
+    if (std::abs(val - RC_pitch_offset) > 0.5f) {
         ahrs._board_orientation = ROTATION_CUSTOM;
         ahrs._custom_yaw = 270;
         ahrs._custom_roll = (int)RC_pitch_offset;
@@ -64,13 +65,14 @@ void Copter::userhook_SuperSlowLoop()
 //#ifdef USERHOOK_AUXSWITCH
 void Copter::userhook_auxSwitch1(const RC_Channel::AuxSwitchPos& ch_flag)
 {
+    /*
     // put your aux switch #1 handler here (CHx_OPT = 47)
     
     RC_Channel channel = RC_Channels::channel(9);
     float val = channel.norm_input();
 
     GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "userhook print");
- 
+ */
 }
 
 void Copter::userhook_auxSwitch2(const RC_Channel::AuxSwitchPos& ch_flag)

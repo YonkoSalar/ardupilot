@@ -1,9 +1,9 @@
 #include "Copter.h"
 
 // CHECK IF THE RIGHT PARAMETERS ARE SET BEFORE INITALISED 
-bool ModeAngHold::init(bool ignore_checks)
+/*bool ModeAngHold::init(bool ignore_checks)
 {
-    /*
+    
     // initialise position and desired velocity
     if (!pos_control->is_active_z()) {
         pos_control->set_alt_target_to_current_alt(); // //SETS TO CURRENT ALTITUDE
@@ -28,11 +28,11 @@ bool ModeAngHold::init(bool ignore_checks)
     }
 
     return true;
-    */
+    
 }
+*/
 
-
-void ModeStabilize::run()
+void ModeAngHold::run()
 {
 
 
