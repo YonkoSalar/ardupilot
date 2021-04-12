@@ -6,6 +6,8 @@
 #include <AP_BattMonitor/AP_BattMonitor.h>
 #include <AP_Vehicle/AP_Vehicle_Type.h>
 
+#include "../../ArduCopter/UserVariables.h" //ADDED USER VARIABLES (RC_Pich_Offset)
+
 extern const AP_HAL::HAL& hal;
 
 AP_Compass_Backend::AP_Compass_Backend()
@@ -20,6 +22,21 @@ void AP_Compass_Backend::rotate_field(Vector3f &mag, uint8_t instance)
         mag.rotate(MAG_BOARD_ORIENTATION);
     }
     mag.rotate(state.rotation);
+
+    //APPLY CHANGES TO THE MAG
+    float newMag_x2 = 0.f;
+    float newMag_z2 = 0.f;
+
+    //SIGNAL FROM CONTROLLER TO APPLY CHANGES
+    if (RC_pitch_offset != 0.f) {
+        //Rotation of y-axis
+        newMag_x2 = mag.x * cosf(RC_pitch_offset * M_PI / 180.0) + mag.z * sinf(RC_pitch_offset * M_PI / 180.0);
+        newMag_z2 = -sinf(RC_pitch_offset * M_PI / 180.0) * mag.x + mag.z * cosf(RC_pitch_offset * M_PI / 180.0);
+    
+    }
+
+    mag.x = newMag_x2;
+    mag.z = newMag_z2;
 
     if (!state.external) {
         // and add in AHRS_ORIENTATION setting if not an external compass
