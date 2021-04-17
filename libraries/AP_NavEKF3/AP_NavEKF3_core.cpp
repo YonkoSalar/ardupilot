@@ -532,7 +532,7 @@ bool NavEKF3_core::InitialiseFilterBootstrap(void)
         initAccVec.normalize();
 
         // calculate initial pitch angle
-        pitch = asinf(initAccVec.x);
+        pitch = asinf(initAccVec.x); //KAN ACCELOMETERE KAN ENDRES HER?
 
         // calculate initial roll angle
         roll = atan2f(-initAccVec.y , -initAccVec.z);
