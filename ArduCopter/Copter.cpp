@@ -75,7 +75,8 @@
  */
 
 #include "Copter.h"
-#include <GCS_MAVLink/GCS.h> // DEBUGGER TEST ---
+#include <GCS_MAVLink/GCS.h> // DEBUGGER TEST
+#include "UserVariables.h" //User Variables
 
 #define FORCE_VERSION_H_INCLUDE
 #include "version.h"
