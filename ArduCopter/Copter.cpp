@@ -225,7 +225,7 @@ void Copter::fast_loop()
     counter++;
     if (counter > 50) {
         counter = 0;
-        gcs().send_text(MAV_SEVERITY_CRITICAL, (double)3.142f);
+        //gcs().send_text(MAV_SEVERITY_CRITICAL, (double)3.142f);
         GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "hello world! %5.3f", (double)3.142f);
 
     }
