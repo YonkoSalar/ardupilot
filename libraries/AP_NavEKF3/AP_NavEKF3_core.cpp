@@ -7,6 +7,8 @@
 #include <AP_Logger/AP_Logger.h>
 #include <AP_DAL/AP_DAL.h>
 
+#include "../../ArduCopter/UserVariables.h"
+
 // constructor
 NavEKF3_core::NavEKF3_core(NavEKF3 *_frontend) :
     frontend(_frontend),
@@ -716,16 +718,17 @@ void NavEKF3_core::UpdateFilter(bool predict)
      */
     if (filterStatus.value != 0) {
         last_filter_ok_ms = dal.millis();
-    }
-    if (filterStatus.value == 0 &&
+    } //CHANGED IF HERE
+    if ((filterStatus.value == 0 &&
         last_filter_ok_ms != 0 &&
         dal.millis() - last_filter_ok_ms > 5000 &&
-        !dal.get_armed()) {
+        !dal.get_armed()) || (changedCurrentValue == true)) {
         // we've been unhealthy for 5 seconds after being healthy, reset the filter
         GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "EKF3 IMU%u forced reset",(unsigned)imu_index);
         last_filter_ok_ms = 0;
         statesInitialised = false;
         InitialiseFilterBootstrap();
+        changedCurrentValue = false;
     }
 }
 

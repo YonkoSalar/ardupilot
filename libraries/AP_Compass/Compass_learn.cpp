@@ -141,7 +141,7 @@ void CompassLearn::update(void)
             Vector3f new_offsets = compass.get_offsets(i) + (field_primary - field2);
             compass.set_offsets(i, new_offsets);
         }
-
+        
         // stop updating the offsets once converged
         if (num_samples > 30 && best_error < 50 && worst_error > 65) {
             // set the offsets and enable compass for EKF use. Let the
@@ -218,7 +218,7 @@ void CompassLearn::process_sample(const struct sample &s)
         Vector3f v2 = mat * expected_field;
         Vector3f offsets = (v2 - v1) + s.offsets;
         float delta = (offsets - predicted_offsets[i]).length();
-
+        
         if (num_samples == 1) {
             predicted_offsets[i] = offsets;
         } else {

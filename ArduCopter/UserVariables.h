@@ -6,4 +6,6 @@
 
 extern float RC_pitch_offset;
 
+extern bool changedCurrentValue;
+
 

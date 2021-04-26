@@ -221,25 +221,6 @@ constexpr int8_t Copter::_failsafe_priorities[7];
 // Main loop - 400hz
 void Copter::fast_loop()
 { 
-    static uint8_t counter = 0;
-    counter++;
-    GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "hello world! %5.3f", (double)3.142f);
-
-    if (counter > 50) {
-        counter = 0;
-        //gcs().send_text(MAV_SEVERITY_CRITICAL, (double)3.142f);
-        GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "hello world! %5.3f", (double)3.142f);
-
-    }
-
-    /*
-    RC_Channel* channel = rc().channel(8);
-    float val = channel->norm_input();
-
-    GCS_SEND_TEXT(MAV_SEVERITY_INFO, "RC channel val: %f", val);
-
-    RC_pitch_offset = val * 90.f;
-    GCS_SEND_TEXT(MAV_SEVERITY_INFO, "RC_pitch_offset: %f", RC_pitch_offset);*/
 
     // update INS immediately to get current gyro data populated
     ins.update();

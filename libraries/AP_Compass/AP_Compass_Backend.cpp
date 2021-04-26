@@ -5,8 +5,11 @@
 
 #include <AP_BattMonitor/AP_BattMonitor.h>
 #include <AP_Vehicle/AP_Vehicle_Type.h>
+#include <GCS_MAVLink/GCS.h>
 
-#include "../../ArduCopter/UserVariables.h" //ADDED USER VARIABLES (RC_Pich_Offset)
+#include "../../ArduCopter/UserVariables.h"
+
+
 
 extern const AP_HAL::HAL& hal;
 
@@ -23,24 +26,6 @@ void AP_Compass_Backend::rotate_field(Vector3f &mag, uint8_t instance)
     }
     mag.rotate(state.rotation);
 
-    
-    //APPLY CHANGES TO THE MAG
-    float newMag_x2 = 0.f;
-    float newMag_z2 = 0.f;
-
-    //SIGNAL FROM CONTROLLER TO APPLY CHANGES
-    if (RC_pitch_offset != 0.f) {
-        //Rotation of y-axis
-        newMag_x2 = mag.x * cosf(RC_pitch_offset * M_PI / 180.0) + mag.z * sinf(RC_pitch_offset * M_PI / 180.0);
-        newMag_z2 = -sinf(RC_pitch_offset * M_PI / 180.0) * mag.x + mag.z * cosf(RC_pitch_offset * M_PI / 180.0);
-
-   
-        mag.x = newMag_x2;
-        mag.z = newMag_z2;
-    }
-
-    
-    
 
     if (!state.external) {
         // and add in AHRS_ORIENTATION setting if not an external compass
@@ -61,7 +46,9 @@ void AP_Compass_Backend::rotate_field(Vector3f &mag, uint8_t instance)
 #else
         mag.rotate((enum Rotation)state.orientation.get());
 #endif
+
     }
+
 }
 
 void AP_Compass_Backend::publish_raw_field(const Vector3f &mag, uint8_t instance)
@@ -139,6 +126,30 @@ void AP_Compass_Backend::correct_field(Vector3f &mag, uint8_t i)
     */
     mag += state.motor_offset;
 #endif // COMPASS_MOT_ENABLED
+
+    //SIGNAL FROM CONTROLLER TO APPLY CHANGES
+    if (changedCurrentValue) {
+    //if (RC_pitch_offset != 0.f) {
+        //Rotation of y-axis
+        float newMag_x2 = mag.x * cosf(RC_pitch_offset * M_PI / 180.0) - mag.z * sinf(RC_pitch_offset * M_PI / 180.0);
+        float newMag_z2 = mag.x * sinf(RC_pitch_offset * M_PI / 180.0) + mag.z * cosf(RC_pitch_offset * M_PI / 180.0);
+
+        
+        static int debugcounter = 0;
+        debugcounter++;
+        if (debugcounter > 100) {
+            debugcounter = 0;
+            
+            //GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "Mx: %.2f,  My: %.2f,  Mz: %.2f", mag.x, mag.y, mag.z);
+
+            //GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "i: %d, Mx: %.2f,  My: %.2f,  Mz: %.2f", i ,mag.x, mag.y, mag.z);
+
+        }
+       
+        mag.x = newMag_x2;
+        mag.z = newMag_z2;
+    }
+
 }
 
 void AP_Compass_Backend::accumulate_sample(Vector3f &field, uint8_t instance,
@@ -166,6 +177,8 @@ void AP_Compass_Backend::accumulate_sample(Vector3f &field, uint8_t instance,
         state.accum_count /= 2;
         state.accum /= 2;
     }
+    
+    
 }
 
 void AP_Compass_Backend::drain_accumulated_samples(uint8_t instance,
@@ -185,9 +198,10 @@ void AP_Compass_Backend::drain_accumulated_samples(uint8_t instance,
     state.accum /= state.accum_count;
 
     publish_filtered_field(state.accum, instance);
-
+    
     state.accum.zero();
     state.accum_count = 0;
+    
 }
 
 /*
@@ -201,6 +215,9 @@ void AP_Compass_Backend::publish_filtered_field(const Vector3f &mag, uint8_t ins
 
     state.last_update_ms = AP_HAL::millis();
     state.last_update_usec = AP_HAL::micros();
+
+    
+  
 }
 
 void AP_Compass_Backend::set_last_update_usec(uint32_t last_update, uint8_t instance)
@@ -264,6 +281,8 @@ void AP_Compass_Backend::set_rotation(uint8_t instance, enum Rotation rotation)
         }
     }
 #endif
+  
+  
 }
 
 static constexpr float FILTER_KOEF = 0.1f;
@@ -310,5 +329,6 @@ bool AP_Compass_Backend::field_ok(const Vector3f &field)
 
 enum Rotation AP_Compass_Backend::get_board_orientation(void) const
 {
+
     return _compass._board_orientation;
 }

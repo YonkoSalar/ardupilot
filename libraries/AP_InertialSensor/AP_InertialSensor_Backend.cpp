@@ -130,33 +130,52 @@ void AP_InertialSensor_Backend::_rotate_and_correct_accel(uint8_t instance, Vect
         accel.rotate(_imu._board_orientation);
     }
     
-    //APPLY CHANGE IN ACCELERATION (ROTATION AROUND X-AXIS)
-    float newAccel_x2 = 0.f;
-    float newAccel_z2 = 0.f;
 
-    if (RC_pitch_offset != 0.f) {
+    //if (RC_pitch_offset != 0.f) {
+    if(changedCurrentValue){
     //Rotation of y-axis
         //FEIL
-        //newAccel_x2 = (accel.x * cosf(RC_pitch_offset * M_PI / 180.0)) - accel.z * sinf(RC_pitch_offset * M_PI / 180.0));
-        //newAccel_z2 = (accel.x * sinf(RC_pitch_offset * M_PI / 180.0)) + accel.z * cosf(RC_pitch_offset * M_PI / 180.0));
+        float newAccel_x2 = (accel.x * cosf(RC_pitch_offset * M_PI / 180.0)) - (accel.z * sinf(RC_pitch_offset * M_PI / 180.0));
+        float newAccel_z2 = (accel.x * sinf(RC_pitch_offset * M_PI / 180.0)) + (accel.z * cosf(RC_pitch_offset * M_PI / 180.0));
         
-        newAccel_x2 = accel.x * cosf(RC_pitch_offset * M_PI / 180.0) + accel.z * sinf(RC_pitch_offset * M_PI / 180.0);
-        newAccel_z2 = -sinf(RC_pitch_offset * M_PI / 180.0) * accel.x + accel.z * cosf(RC_pitch_offset * M_PI / 180.0);
+        /*
+        static int debugcounter = 0;
+        debugcounter++;
+        if (debugcounter > 1000) {
+            debugcounter = 0;
+
+            GCS_SEND_TEXT(MAV_SEVERITY_INFO, "x: %.2f, y: %.2f, z: %.2f", accel.x, accel.y, accel.z);
+
+            GCS_SEND_TEXT(MAV_SEVERITY_INFO, "x2: %.2f, z2: %.2f", newAccel_x2, newAccel_z2);
+
+
+        }
+        */
+
+        //newAccel_x2 = accel.x * cosf(RC_pitch_offset * M_PI / 180.0) + accel.z * sinf(RC_pitch_offset * M_PI / 180.0);
+        //newAccel_z2 = -sinf(RC_pitch_offset * M_PI / 180.0) * accel.x + accel.z * cosf(RC_pitch_offset * M_PI / 180.0);
 
         accel.x = newAccel_x2;
         accel.z = newAccel_z2;
+        
+
     }
 
+
+
     
+    
+    //GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "RC: %.2f,  X-axis: %.2f,  Z-axis: %.2f", RC_pitch_offset, newAccel_x2, newAccel_z2);
+
+    /*
     static int debugcounter = 0;
     debugcounter++;
     if (debugcounter > 1000) {
         debugcounter = 0;
-        GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "RC: %.2f,  X-axis: %.2f,  Z-axis: %.2f", RC_pitch_offset, newAccel_x2, newAccel_z2);
 
         
     }
-
+    */
     
     
 }
@@ -182,12 +201,47 @@ void AP_InertialSensor_Backend::_rotate_and_correct_gyro(uint8_t instance, Vecto
         // gyro calibration is always assumed to have been done in sensor frame
         gyro -= _imu._gyro_offset[instance];
     }
-
+    
     if (_imu._board_orientation == ROTATION_CUSTOM && _imu._custom_rotation) {
         gyro = *_imu._custom_rotation * gyro;
     } else {
         gyro.rotate(_imu._board_orientation);
     }
+
+    if (changedCurrentValue) {
+    //if (RC_pitch_offset != 0.f) {
+        //Rotation of y-axis
+         
+        float newGyro_x2 = (gyro.x * cosf(RC_pitch_offset * M_PI / 180.0)) - (gyro.z * sinf(RC_pitch_offset * M_PI / 180.0));
+        float newGyro_z2 = (gyro.x * sinf(RC_pitch_offset * M_PI / 180.0)) + (gyro.z * cosf(RC_pitch_offset * M_PI / 180.0));
+
+        /*
+        static int debugcounter = 0;
+        debugcounter++;
+        if (debugcounter > 1000) {
+            debugcounter = 0;
+
+            GCS_SEND_TEXT(MAV_SEVERITY_INFO, "x: %.2f, y: %.2f, z: %.2f", gyro.x, gyro.y, gyro.z);
+
+
+            GCS_SEND_TEXT(MAV_SEVERITY_INFO, "Nx: %.2f, Nz: %.2f", newGyro_x2, newGyro_z2);
+
+
+        }*/
+
+        
+        //newAccel_x2 = accel.x * cosf(RC_pitch_offset * M_PI / 180.0) + accel.z * sinf(RC_pitch_offset * M_PI / 180.0);
+        //newAccel_z2 = -sinf(RC_pitch_offset * M_PI / 180.0) * accel.x + accel.z * cosf(RC_pitch_offset * M_PI / 180.0);
+
+        gyro.z = newGyro_z2;
+        gyro.x = newGyro_x2;
+
+        
+
+
+
+    }
+
 }
 
 /*
