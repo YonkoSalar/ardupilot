@@ -224,6 +224,9 @@ public:
     friend class ModeZigZag;
     friend class ModeAutorotate;
 
+    // new mode
+    friend class ModeAngHold;
+
     Copter(void);
 
 private:

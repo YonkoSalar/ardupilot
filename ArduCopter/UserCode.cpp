@@ -50,11 +50,6 @@ void Copter::userhook_SlowLoop()
 void Copter::userhook_SuperSlowLoop()
 {
     // put your 1Hz code here
-    //RC_Channel* channel = rc().channel(8);
-    //float val = channel->norm_input();
-
-
-
     
     //0 degress -> val: 0.575 -> RC_pitch_offset: 51.75
     //-90 degrees -> val: 0 -> RC_pitch_offset: 0
@@ -62,16 +57,7 @@ void Copter::userhook_SuperSlowLoop()
     //45 degrees -> val: 1 -> RC_pitch_offset: 90
     // -1 degress -> val: 0.5 -> RC-pitch_offset: 45
     
-    
-    
-
-    
-    
-    
-    float prevValue = RC_pitch_offset;
-
-    //RC_pitch_offset = val * 90.f;
-
+    /*
     static int debugcounter = 0;
     debugcounter++;
     if (debugcounter > 15) {
@@ -90,14 +76,15 @@ void Copter::userhook_SuperSlowLoop()
         //GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "RC pitch offset: %.2f", RC_pitch_offset);
         
     }
+    */
 
-
+   /*
     if (prevValue != RC_pitch_offset)
     {
         changedCurrentValue = true;
         GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "RC pitch offset: %.2f", RC_pitch_offset);
     }
-    
+    */
 
    
 
@@ -115,20 +102,20 @@ void Copter::userhook_SuperSlowLoop()
 #endif
 
 
-
-
-
 //#ifdef USERHOOK_AUXSWITCH
 void Copter::userhook_auxSwitch1(const RC_Channel::AuxSwitchPos& ch_flag)
 {
-    /*
+    
     // put your aux switch #1 handler here (CHx_OPT = 47)
     
-    RC_Channel channel = RC_Channels::channel(9);
-    float val = channel.norm_input();
+    RC_Channel* channel = rc().channel(8);
+    float val = channel->norm_input();
 
-    GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "userhook print");
-    */
+    RC_pitch_offset = val * 90.f;
+    changedCurrentValue = true;
+    
+    GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "new pitch: %.2f", RC_pitch_offset);
+    
 }
 
 void Copter::userhook_auxSwitch2(const RC_Channel::AuxSwitchPos& ch_flag)
