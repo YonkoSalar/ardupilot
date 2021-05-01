@@ -22,6 +22,15 @@ enum autopilot_yaw_mode {
     AUTO_YAW_CIRCLE =           7,  // use AC_Circle's provided yaw (used during Loiter-Turns commands)
 };
 
+/*
+struct PACKED log_Icarus {
+    LOG_PACKET_HEADER;
+    uint64_t time_us;
+    float RC_pitch_offset;
+    float voltage;
+    float current;
+};*/
+
 // Frame types
 #define UNDEFINED_FRAME 0
 #define MULTICOPTER_FRAME 1

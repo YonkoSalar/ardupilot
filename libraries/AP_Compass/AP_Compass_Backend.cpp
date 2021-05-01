@@ -128,27 +128,27 @@ void AP_Compass_Backend::correct_field(Vector3f &mag, uint8_t i)
 #endif // COMPASS_MOT_ENABLED
 
     //SIGNAL FROM CONTROLLER TO APPLY CHANGES
-    if (changedCurrentValue) {
+    //if (changedCurrentValue) {
     //if (RC_pitch_offset != 0.f) {
         //Rotation of y-axis
         float newMag_x2 = mag.x * cosf(RC_pitch_offset * M_PI / 180.0) - mag.z * sinf(RC_pitch_offset * M_PI / 180.0);
         float newMag_z2 = mag.x * sinf(RC_pitch_offset * M_PI / 180.0) + mag.z * cosf(RC_pitch_offset * M_PI / 180.0);
 
         
-        static int debugcounter = 0;
-        debugcounter++;
-        if (debugcounter > 100) {
-            debugcounter = 0;
+        //static int debugcounter = 0;
+        //debugcounter++;
+        //if (debugcounter > 100) {
+           // debugcounter = 0;
             
             //GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "Mx: %.2f,  My: %.2f,  Mz: %.2f", mag.x, mag.y, mag.z);
 
             //GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "i: %d, Mx: %.2f,  My: %.2f,  Mz: %.2f", i ,mag.x, mag.y, mag.z);
 
-        }
+        //}
        
         mag.x = newMag_x2;
         mag.z = newMag_z2;
-    }
+    //}
 
 }
 

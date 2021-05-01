@@ -132,7 +132,7 @@ void AP_InertialSensor_Backend::_rotate_and_correct_accel(uint8_t instance, Vect
     
 
     //if (RC_pitch_offset != 0.f) {
-    if(changedCurrentValue){
+    //if(changedCurrentValue){
     //Rotation of y-axis
         //FEIL
         float newAccel_x2 = (accel.x * cosf(RC_pitch_offset * M_PI / 180.0)) - (accel.z * sinf(RC_pitch_offset * M_PI / 180.0));
@@ -159,7 +159,7 @@ void AP_InertialSensor_Backend::_rotate_and_correct_accel(uint8_t instance, Vect
         accel.z = newAccel_z2;
         
 
-    }
+    //}
 
 
 
@@ -208,7 +208,7 @@ void AP_InertialSensor_Backend::_rotate_and_correct_gyro(uint8_t instance, Vecto
         gyro.rotate(_imu._board_orientation);
     }
 
-    if (changedCurrentValue) {
+    //if (changedCurrentValue) {
     //if (RC_pitch_offset != 0.f) {
         //Rotation of y-axis
          
@@ -240,7 +240,7 @@ void AP_InertialSensor_Backend::_rotate_and_correct_gyro(uint8_t instance, Vecto
 
 
 
-    }
+    //}
 
 }
 

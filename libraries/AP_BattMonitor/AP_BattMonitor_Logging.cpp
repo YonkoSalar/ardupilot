@@ -1,6 +1,8 @@
 #include "AP_BattMonitor_Backend.h"
 #include <AP_Logger/AP_Logger.h>
 
+#include "../../ArduCopter/UserVariables.h"
+
 extern const AP_HAL::HAL& hal;
 
 // Write BAT data packet(s)
@@ -18,7 +20,9 @@ void AP_BattMonitor_Backend::Log_Write_BAT(const uint8_t instance, const uint64_
         current_total       : has_curr ? _state.consumed_mah : AP::logger().quiet_nanf(),
         consumed_wh         : has_curr ? _state.consumed_wh : AP::logger().quiet_nanf(),
         temperature         : (int16_t) ( has_temperature() ? _state.temperature * 100 : 0),
-        resistance          : _state.resistance
+        resistance          : _state.resistance,
+        RC_pitch_offset     : RC_pitch_offset //Added log to pitch offset
+
     };
     AP::logger().WriteBlock(&pkt, sizeof(pkt));
 }

@@ -77,6 +77,7 @@
 #include "Copter.h"
 #include <GCS_MAVLink/GCS.h> // DEBUGGER TEST
 #include "UserVariables.h" //User Variables
+#include "../libraries/AP_Logger/AP_Logger.h"
 
 #define FORCE_VERSION_H_INCLUDE
 #include "version.h"
@@ -669,3 +670,23 @@ Copter copter;
 AP_Vehicle& vehicle = copter;
 
 AP_HAL_MAIN_CALLBACKS(&copter);
+
+/*
+//Logger for Icarus
+void Copter::Log_Write_Icarus()
+{
+    battery.read();
+
+    struct log_Icarus pkt = {
+
+        LOG_PACKET_HEADER_INIT(LOG_ICA_MSG),
+        time_us  : AP_HAL::micros64(),
+        RC_pitch_offset : RC_pitch_offset,
+        voltage : battery.voltage(),
+        current : 1234.f
+        
+        
+    };
+
+    logger.WriteBlock(&pkt, sizeof(pkt));
+}*/

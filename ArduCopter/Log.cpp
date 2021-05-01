@@ -22,6 +22,10 @@ struct PACKED log_Control_Tuning {
     int16_t  climb_rate;
 };
 
+
+
+
+
 // Write a control tuning packet
 void Copter::Log_Write_Control_Tuning()
 {

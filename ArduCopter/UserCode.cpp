@@ -27,6 +27,7 @@ void Copter::userhook_FastLoop()
 #ifdef USERHOOK_50HZLOOP
 void Copter::userhook_50Hz()
 {
+    //Log_Write_Icarus();
     // put your 50Hz code here
 }
 #endif

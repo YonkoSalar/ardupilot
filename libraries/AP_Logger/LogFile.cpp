@@ -62,7 +62,7 @@ bool AP_Logger_Backend::Write_Format(const struct LogStructure *s)
 bool AP_Logger_Backend::Write_Unit(const struct UnitStructure *s)
 {
     struct log_Unit pkt{
-        LOG_PACKET_HEADER_INIT(LOG_UNIT_MSG),
+        LOG_PACKET_HEADER_INIT(LOG_ICA_MSG),
         time_us : AP_HAL::micros64(),
         type    : s->ID,
         unit    : { }

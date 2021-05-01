@@ -1637,7 +1637,7 @@ enum LogMessages : uint8_t {
     LOG_FORMAT_MSG = 128, // this must remain #128
 
     LOG_IDS_FROM_DAL,
-
+    LOG_ICA_MSG,
     LOG_ACC_MSG,
     LOG_GYR_MSG,
     LOG_PIDR_MSG,

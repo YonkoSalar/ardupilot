@@ -2,6 +2,7 @@
 
 #include <AP_Logger/LogStructure.h>
 
+
 #define LOG_IDS_FROM_BATTMONITOR \
     LOG_BAT_MSG, \
     LOG_BCL_MSG
@@ -28,6 +29,7 @@ struct PACKED log_BAT {
     float    consumed_wh;
     int16_t  temperature; // degrees C * 100
     float    resistance;
+    float RC_pitch_offset;
 };
 
 // @LoggerMessage: BCL
