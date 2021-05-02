@@ -108,14 +108,20 @@ void Copter::userhook_auxSwitch1(const RC_Channel::AuxSwitchPos& ch_flag)
 {
     
     // put your aux switch #1 handler here (CHx_OPT = 47)
-    
-    RC_Channel* channel = rc().channel(8);
-    float val = channel->norm_input();
 
-    RC_pitch_offset = val * 90.f;
-    changedCurrentValue = true;
+    RC_Channel* aoa_channel = rc().channel(10);
+    float aoa_val = aoa_channel->norm_input();
+    RC_aoa = roundf(aoa_val * 90.f);
     
-    GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "new pitch: %.2f", RC_pitch_offset);
+    RC_Channel* pitch_channel = rc().channel(8);
+    float pitch_val = pitch_channel->norm_input();
+    
+    if(RC_pitch_offset != roundf(pitch_val * 90.f)){
+        RC_pitch_offset = roundf(pitch_val * 90.f);
+        should_reset_ekf = true;
+    }
+    
+    GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "pitch: %.2f, aoa: %.2f", RC_pitch_offset, RC_aoa);
     
 }
 

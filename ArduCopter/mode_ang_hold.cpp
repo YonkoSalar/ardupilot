@@ -93,7 +93,7 @@ void ModeAngHold::run()
             pos_control->set_alt_target_from_climb_rate_ff(target_climb_rate, G_Dt, false);
 
             // add pitch offset from controller
-            target_pitch = target_pitch - RC_pitch_offset;
+            target_pitch = target_pitch - RC_aoa;
 
             break;
     }

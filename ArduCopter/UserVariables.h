@@ -6,6 +6,8 @@
 
 extern float RC_pitch_offset;
 
-extern bool changedCurrentValue;
+extern float RC_aoa;
+
+extern bool should_reset_ekf;
 
 
