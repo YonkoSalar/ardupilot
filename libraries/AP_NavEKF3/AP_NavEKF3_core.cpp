@@ -195,6 +195,9 @@ bool NavEKF3_core::setup_core(uint8_t _imu_index, uint8_t _core_index)
 // Use a function call rather than a constructor to initialise variables because it enables the filter to be re-started in flight if necessary.
 void NavEKF3_core::InitialiseVariables()
 {
+    //
+    awaiting_reset = false;
+
     // calculate the nominal filter update rate
     const auto &ins = dal.ins();
     localFilterTimeStep_ms = (uint8_t)(1000*ins.get_loop_delta_t());
@@ -718,17 +721,23 @@ void NavEKF3_core::UpdateFilter(bool predict)
      */
     if (filterStatus.value != 0) {
         last_filter_ok_ms = dal.millis();
-    } //CHANGED IF HERE
+    }
+    if(should_reset_ekf){
+        last_should_reset = dal.millis();
+        should_reset_ekf = false;
+        awaiting_reset = true;
+    }
+     //CHANGED IF HERE
     if ((filterStatus.value == 0 &&
         last_filter_ok_ms != 0 &&
         dal.millis() - last_filter_ok_ms > 5000 &&
-        !dal.get_armed()) || (should_reset_ekf == true)) {
+        !dal.get_armed()) || (awaiting_reset && dal.millis() - last_should_reset > 5000 && !dal.get_armed())) {
         // we've been unhealthy for 5 seconds after being healthy, reset the filter
         GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "EKF3 IMU%u forced reset",(unsigned)imu_index);
         last_filter_ok_ms = 0;
         statesInitialised = false;
         InitialiseFilterBootstrap();
-        should_reset_ekf = false;
+        awaiting_reset = false;
     }
 }
 

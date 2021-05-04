@@ -1417,6 +1417,12 @@ private:
 
     // when was attitude filter status last non-zero?
     uint32_t last_filter_ok_ms;
+
+    // timer for ekf force reset
+    uint32_t last_should_reset;
+
+    // reset state
+    bool awaiting_reset;
     
     // should we assume zero sideslip?
     bool assume_zero_sideslip(void) const;
