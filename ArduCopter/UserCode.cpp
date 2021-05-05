@@ -116,7 +116,7 @@ void Copter::userhook_auxSwitch1(const RC_Channel::AuxSwitchPos& ch_flag)
     RC_Channel* pitch_channel = rc().channel(8);
     float pitch_val = pitch_channel->norm_input();
     
-    if(RC_pitch_offset != roundf(pitch_val * 90.f)){
+    if(abs(RC_pitch_offset - roundf(pitch_val * 90.f)) > FLT_EPSILON){
         GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "RC != pticval");
         RC_pitch_offset = roundf(pitch_val * 90.f);
         should_reset_ekf = true;
