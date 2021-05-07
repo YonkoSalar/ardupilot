@@ -354,6 +354,7 @@ bool AP_Logger_Backend::StartNewLogOK() const
 void AP_Logger_Backend::validate_WritePrioritisedBlock(const void *pBuffer,
                                                        uint16_t size)
 {
+    return;
     // just check the first few packets to avoid too much overhead
     // (finding the structures is expensive)
     static uint16_t count = 0;
