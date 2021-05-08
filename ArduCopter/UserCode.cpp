@@ -109,11 +109,11 @@ void Copter::userhook_auxSwitch1(const RC_Channel::AuxSwitchPos& ch_flag)
     
     // put your aux switch #1 handler here (CHx_OPT = 47)
 
-    RC_Channel* aoa_channel = rc().channel(10);
+    RC_Channel* aoa_channel = rc().channel(6);
     float aoa_val = aoa_channel->norm_input();
     RC_aoa = roundf(aoa_val * 90.f);
     
-    RC_Channel* pitch_channel = rc().channel(8);
+    RC_Channel* pitch_channel = rc().channel(5);
     float pitch_val = pitch_channel->norm_input();
     
     if(abs(RC_pitch_offset - roundf(pitch_val * 90.f)) > FLT_EPSILON){

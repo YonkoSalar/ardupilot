@@ -93,10 +93,17 @@ void ModeAngHold::run()
             pos_control->set_alt_target_from_climb_rate_ff(target_climb_rate, G_Dt, false);
 
             // add pitch offset from controller
-            target_pitch = target_pitch - RC_aoa;
+            target_pitch = target_pitch - (RC_aoa * 100.f);
 
             break;
     }
+    
+    /* static int debugcounter = 0;
+    debugcounter++;
+    if (debugcounter > 800) {
+        debugcounter = 0;
+        GCS_SEND_TEXT(MAV_SEVERITY_DEBUG, "target pitch: %0.2f", target_pitch);
+    } */
 
     // call attitude controller
     attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(target_roll, target_pitch, target_yaw_rate);
