@@ -25,6 +25,9 @@ void AP_BattMonitor_Backend::Log_Write_BAT(const uint8_t instance, const uint64_
 
     };
     AP::logger().WriteBlock(&pkt, sizeof(pkt));
+
+
+
 }
 
 // Write BCL data packet if has_cell_voltages

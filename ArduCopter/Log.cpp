@@ -1,5 +1,8 @@
 #include "Copter.h"
 
+#include "../ArduCopter/UserVariables.h"
+#include "../libraries/AP_BattMonitor/AP_BattMonitor_Backend.h"
+
 #if LOGGING_ENABLED == ENABLED
 
 // Code to Write and Read packets from AP_Logger log memory
@@ -433,6 +436,9 @@ struct PACKED log_GuidedTarget {
     float vel_target_z;
 };
 
+
+
+
 // Write a Guided mode target
 // pos_target is lat, lon, alt OR offset from ekf origin in cm OR roll, pitch, yaw target in centi-degrees
 // vel_target is cm/s
@@ -451,6 +457,54 @@ void Copter::Log_Write_GuidedTarget(uint8_t target_type, const Vector3f& pos_tar
     };
     logger.WriteBlock(&pkt, sizeof(pkt));
 }
+
+//Icarus: Power consumption log
+struct PACKED log_Icarus {
+    LOG_PACKET_HEADER;
+    uint64_t time_us;
+    //uint8_t  instance;
+    float    voltage;
+    float    voltage_resting;
+    float    current_amps_1;
+    float    current_total_1;
+    float    consumed_wh_1;
+    //int16_t  temperature; // degrees C * 100
+    //float    resistance;
+    float RC_pitch_offset;
+    float aoa;
+    float vel;
+};
+
+
+
+//Logger for Icarus
+void Copter::Log_Write_Icarus()
+{    
+    
+    battery.read();
+    /*
+    struct log_Icarus pkt = {
+
+        LOG_PACKET_HEADER_INIT(LOG_ICA_MSG),
+        time_us   : AP_HAL::micros64(),
+        //instance : instance,
+        voltage : battery.voltage(), 
+        voltage_resting : battery.voltage_resting_estimate(),
+        current_amps_1 : _interim_state.current_amps,
+        current_total_1 : battery.consumed_mah,
+        consumed_wh_1 : battery.consumed_wh,
+        //temperature : (battery.temperature() * 100 : 0),
+        //resistance : battery.resistance,
+        RC_pitch_offset : RC_pitch_offset,
+        aoa : RC_aoa,
+        vel : 1.f
+
+    };
+
+    logger.WriteBlock(&pkt, sizeof(pkt));*/
+}
+
+
 
 // type and unit information can be found in
 // libraries/AP_Logger/Logstructure.h; search for "log_Units" for
@@ -616,6 +670,25 @@ const struct LogStructure Copter::log_structure[] = {
 
     { LOG_GUIDEDTARGET_MSG, sizeof(log_GuidedTarget),
       "GUID",  "QBffffff",    "TimeUS,Type,pX,pY,pZ,vX,vY,vZ", "s-mmmnnn", "F-BBBBBB" },
+
+// @LoggerMessage: ICA
+// @Description: Log of parameters for calculating power consumption
+// @Field: TimeUS: Time since system startup
+// @Field: Instance: battery instance number
+// @Field: Volt: measured voltage
+// @Field: VoltR: estimated resting voltage
+// @Field: Curr: measured current
+// @Field: CurrTot: current * time
+// @Field: EnrgTot: energy this battery has produced
+// @Field: Temp: angle adjustments to motors
+// @Field: Res: estimated battery resistance
+// @Field: MPitch: angle adjustments to motors
+// @Field: AOA: Angle of attack 
+// @Field: Vel: velocity
+
+    { LOG_ICA_MSG, sizeof(log_Icarus), \
+            "ICA", "Qffffffff", "TimeUS,Volt,VoltR,Curr,CurrTot,EnrgTot,MPitch,Aoa,Vel", "svvAiJ???", "F000!/000" }, \
+
 };
 
 void Copter::Log_Write_Vehicle_Startup_Messages()
@@ -659,3 +732,5 @@ void Copter::Log_Write_Heli() {}
 void Copter::log_init(void) {}
 
 #endif // LOGGING_ENABLED
+
+

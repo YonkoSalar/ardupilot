@@ -461,6 +461,7 @@ void Copter::twentyfive_hz_logging()
         g2.arot.Log_Write_Autorotation();
     }
 #endif
+
 }
 
 // three_hz_loop - 3.3hz loop
@@ -620,7 +621,7 @@ void Copter::update_altitude()
         write_notch_log_messages();
 #endif
     }
-}
+} 
 
 // vehicle specific waypoint info helpers
 bool Copter::get_wp_distance_m(float &distance) const
@@ -671,22 +672,5 @@ AP_Vehicle& vehicle = copter;
 
 AP_HAL_MAIN_CALLBACKS(&copter);
 
-/*
-//Logger for Icarus
-void Copter::Log_Write_Icarus()
-{
-    battery.read();
 
-    struct log_Icarus pkt = {
 
-        LOG_PACKET_HEADER_INIT(LOG_ICA_MSG),
-        time_us  : AP_HAL::micros64(),
-        RC_pitch_offset : RC_pitch_offset,
-        voltage : battery.voltage(),
-        current : 1234.f
-        
-        
-    };
-
-    logger.WriteBlock(&pkt, sizeof(pkt));
-}*/
