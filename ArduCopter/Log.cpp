@@ -480,19 +480,20 @@ struct PACKED log_Icarus {
 //Logger for Icarus
 void Copter::Log_Write_Icarus()
 {    
-    
+    uint8_t instance = AP_BATT_PRIMARY_INSTANCE;
     battery.read();
-    /*
+    
+
     struct log_Icarus pkt = {
 
         LOG_PACKET_HEADER_INIT(LOG_ICA_MSG),
         time_us   : AP_HAL::micros64(),
         //instance : instance,
-        voltage : battery.voltage(), 
-        voltage_resting : battery.voltage_resting_estimate(),
-        current_amps_1 : _interim_state.current_amps,
-        current_total_1 : battery.consumed_mah,
-        consumed_wh_1 : battery.consumed_wh,
+        voltage : battery.state[instance].voltage,
+        voltage_resting : battery.state[instance].voltage_resting_estimate,
+        current_amps_1 : battery.state[instance].current_amps,
+        current_total_1 : battery.state[instance].consumed_mah,
+        consumed_wh_1 : battery.state[instance].consumed_wh,
         //temperature : (battery.temperature() * 100 : 0),
         //resistance : battery.resistance,
         RC_pitch_offset : RC_pitch_offset,
@@ -501,7 +502,7 @@ void Copter::Log_Write_Icarus()
 
     };
 
-    logger.WriteBlock(&pkt, sizeof(pkt));*/
+    logger.WriteBlock(&pkt, sizeof(pkt));
 }
 
 

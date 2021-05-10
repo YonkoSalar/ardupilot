@@ -727,7 +727,7 @@ void NavEKF3_core::UpdateFilter(bool predict)
         should_reset_ekf = false;
         awaiting_reset = true;
     }
-     //CHANGED IF HERE
+     //Added extra condition for EKF3 reset
     if ((filterStatus.value == 0 &&
         last_filter_ok_ms != 0 &&
         dal.millis() - last_filter_ok_ms > 5000 &&

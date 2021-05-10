@@ -998,6 +998,8 @@ private:
 
 public:
     void failsafe_check();      // failsafe.cpp
+    
+    
 };
 
 extern Copter copter;

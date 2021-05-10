@@ -212,6 +212,8 @@ public:
 
     static const struct AP_Param::GroupInfo var_info[];
 
+    BattMonitor_State state[AP_BATT_MONITOR_MAX_INSTANCES]; //CHANGED POSITION
+
 protected:
 
     /// parameters
@@ -220,7 +222,7 @@ protected:
 private:
     static AP_BattMonitor *_singleton;
 
-    BattMonitor_State state[AP_BATT_MONITOR_MAX_INSTANCES];
+    //BattMonitor_State state[AP_BATT_MONITOR_MAX_INSTANCES];
     AP_BattMonitor_Backend *drivers[AP_BATT_MONITOR_MAX_INSTANCES];
     uint32_t    _log_battery_bit;
     uint8_t     _num_instances;                                     /// number of monitors
