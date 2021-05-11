@@ -498,7 +498,7 @@ void Copter::Log_Write_Icarus()
         //resistance : battery.resistance,
         RC_pitch_offset : RC_pitch_offset,
         aoa : RC_aoa,
-        vel : 1.f
+        vel : gps.ground_speed()
 
     };
 
