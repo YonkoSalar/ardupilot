@@ -29,7 +29,7 @@ void Copter::userhook_50Hz()
 {
     
     // put your 50Hz code here
-    Log_Write_Icarus();
+    //Log_Write_Icarus();
 }
 #endif
 

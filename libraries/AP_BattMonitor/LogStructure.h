@@ -29,7 +29,7 @@ struct PACKED log_BAT {
     float    consumed_wh;
     int16_t  temperature; // degrees C * 100
     float    resistance;
-    float RC_pitch_offset;
+    //float RC_pitch_offset;
 };
 
 // @LoggerMessage: BCL
@@ -60,7 +60,7 @@ struct PACKED log_BCL {
 //Added pitch offset from RC controller
 #define LOG_STRUCTURE_FROM_BATTMONITOR        \
     { LOG_BAT_MSG, sizeof(log_BAT), \
-        "BAT", "QBfffffcff", "TimeUS,Instance,Volt,VoltR,Curr,CurrTot,EnrgTot,Temp,Res,MPitch", "s#vvAiJOw?", "F-000!/?00" },  \
+        "BAT", "QBfffffcf", "TimeUS,Instance,Volt,VoltR,Curr,CurrTot,EnrgTot,Temp,Res", "s#vvAiJOw", "F-000!/?0" },  \
     { LOG_BCL_MSG, sizeof(log_BCL), \
         "BCL", "QBfHHHHHHHHHHHH", "TimeUS,Instance,Volt,V1,V2,V3,V4,V5,V6,V7,V8,V9,V10,V11,V12", "s#vvvvvvvvvvvvv", "F-0CCCCCCCCCCCC" },
 

@@ -2,6 +2,10 @@
 
 #include "../ArduCopter/UserVariables.h"
 #include "../libraries/AP_BattMonitor/AP_BattMonitor_Backend.h"
+#include "../libraries/AP_NavEKF3/AP_NavEKF3_core.h"
+#include "../libraries/AP_NavEKF3/AP_NavEKF3.h"
+#include <GCS_MAVLink/GCS.h>
+
 
 #if LOGGING_ENABLED == ENABLED
 
@@ -464,15 +468,19 @@ struct PACKED log_Icarus {
     uint64_t time_us;
     //uint8_t  instance;
     float    voltage;
-    float    voltage_resting;
+    //float    voltage_resting;
     float    current_amps_1;
     float    current_total_1;
-    float    consumed_wh_1;
-    //int16_t  temperature; // degrees C * 100
+    //float    consumed_wh_1;
+    //int16_t  temperature; 
     //float    resistance;
     float RC_pitch_offset;
     float aoa;
     float vel;
+
+    uint16_t yaw;
+    int16_t pitch;
+    int16_t roll;
 };
 
 
@@ -480,8 +488,27 @@ struct PACKED log_Icarus {
 //Logger for Icarus
 void Copter::Log_Write_Icarus()
 {    
-    uint8_t instance = AP_BATT_PRIMARY_INSTANCE;
+    //ORIENTATION READINGS
+    Vector3f euler;
+    ahrs.get_NavEKF3().getEulerAngles(ekf_primary_core, euler);
+    
+   
+    
+    //BATTERY SENSOR READINGS
     battery.read();
+    uint8_t instance = AP_BATT_PRIMARY_INSTANCE;
+    
+    float current;
+    bool has_current = battery.current_amps(current, instance);
+    GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "Has current?: %d", has_current);
+
+    
+
+    float mah;
+    bool has_wah = battery.consumed_mah(mah, instance);
+    GCS_SEND_TEXT(MAV_SEVERITY_CRITICAL, "Consumed mah?: %d", has_wah);
+    
+   
     
 
     struct log_Icarus pkt = {
@@ -489,16 +516,19 @@ void Copter::Log_Write_Icarus()
         LOG_PACKET_HEADER_INIT(LOG_ICA_MSG),
         time_us   : AP_HAL::micros64(),
         //instance : instance,
-        voltage : battery.state[instance].voltage,
-        voltage_resting : battery.state[instance].voltage_resting_estimate,
-        current_amps_1 : battery.state[instance].current_amps,
-        current_total_1 : battery.state[instance].consumed_mah,
-        consumed_wh_1 : battery.state[instance].consumed_wh,
+        voltage : battery.voltage(instance),
+        //voltage_resting : battery.state[instance].voltage_resting_estimate,
+        current_amps_1 : current,
+        current_total_1 : mah,
+        //consumed_wh_1 : battery.state[instance].consumed_wh, 
         //temperature : (battery.temperature() * 100 : 0),
         //resistance : battery.resistance,
         RC_pitch_offset : RC_pitch_offset,
         aoa : RC_aoa,
-        vel : gps.ground_speed()
+        vel : gps.ground_speed(),
+        yaw : (uint16_t) wrap_360_cd(100 * degrees(euler.z)),
+        pitch : (int16_t)(100 * degrees(euler.y)),
+        roll : (int16_t)(100 * degrees(euler.x))
 
     };
 
@@ -688,7 +718,7 @@ const struct LogStructure Copter::log_structure[] = {
 // @Field: Vel: velocity
 
     { LOG_ICA_MSG, sizeof(log_Icarus), \
-            "ICA", "Qffffffff", "TimeUS,Volt,VoltR,Curr,CurrTot,EnrgTot,MPitch,Aoa,Vel", "svvAiJ???", "F000!/000" }, \
+            "ICA", "QffffffCcc", "TimeUS,Volt,Curr,CurrTot,MPitch,Aoa,Vel,Yaw,Pitch,Roll", "svAi???hdd", "F00!000BBB" }, \
 
 };
 

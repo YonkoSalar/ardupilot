@@ -722,6 +722,8 @@ void NavEKF3_core::UpdateFilter(bool predict)
     if (filterStatus.value != 0) {
         last_filter_ok_ms = dal.millis();
     }
+
+
     if(should_reset_ekf){
         last_should_reset = dal.millis();
         should_reset_ekf = false;

@@ -21,7 +21,7 @@ void AP_BattMonitor_Backend::Log_Write_BAT(const uint8_t instance, const uint64_
         consumed_wh         : has_curr ? _state.consumed_wh : AP::logger().quiet_nanf(),
         temperature         : (int16_t) ( has_temperature() ? _state.temperature * 100 : 0),
         resistance          : _state.resistance,
-        RC_pitch_offset     : RC_pitch_offset //Added log to pitch offset
+        //RC_pitch_offset     : RC_pitch_offset 
 
     };
     AP::logger().WriteBlock(&pkt, sizeof(pkt));
